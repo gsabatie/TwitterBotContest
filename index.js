@@ -6,7 +6,10 @@ const twitterKeys = require('./twitterKeys.json')
 const lang =  {fr : 'concours, RT', en: 'Contest, RT'}
 const botScreenName = 'robot__san'
 const dayBeforeUnfollow = 14;
-const log = bunyan.createLogger({name: 'TwitterBotContest'});
+const log = bunyan.createLogger({name: 'TwitterBotContest', streams: [{
+        path: 'bot.log',
+        // `type: 'file'` is implied
+    }]});
 
 const T = new Twit(twitterKeys);
 
