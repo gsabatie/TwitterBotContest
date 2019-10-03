@@ -3,7 +3,7 @@ const bunyan = require('bunyan');
 const _ = require('lodash')
 const twitterKeys = require('./twitterKeys.json')
 
-const lang =  {fr : 'concours, RT', en: 'Contest, RT'}
+const lang =  {fr : 'concours, RT, FOLLOW', en: 'giveaway, RT, FOLLOW``'}
 const botScreenName = 'robot__san'
 const dayBeforeUnfollow = 14;
 const log = bunyan.createLogger({name: 'TwitterBotContest', streams: [{
@@ -31,6 +31,26 @@ function retweet(tweetID) {
         }
     });
 }
+
+/**
+ * Send a post request to like
+ * @param tweetID unique id of the tweet
+ */
+function like(tweetID) {
+
+    T.post('statuses/like/:id', {
+        id: tweetID
+    }, function(err, response) {
+        log.info('statuses/like/:id' , {tweetID : tweetID});
+        if (response) {
+            log.info('success')
+        }
+        if (err) {
+            log.error(err.code, err.message);
+        }
+    });
+}
+
 
 /**
  * Send a post request to unfollow an user
@@ -99,8 +119,11 @@ function participateContest(q) {
         log.info('search/tweets', params)
         if (!err) {
             _.forEach(data.statuses, function (tweet) {
+                log.info('tweet', tweet)
+                log.info('hashtags', tweet.entities.hashtags)
                 if (!tweet.retweeted) {
                 retweet(tweet.id_str)
+                like(tweet.id_str)
                 follow(tweet.user)
                 _.forEach(tweet.entities.user_mentions, function (userToFollow) {
                     follow(userToFollow)
@@ -112,5 +135,6 @@ function participateContest(q) {
 }
 participateContest(lang.fr)
 participateContest(lang.en)
-setInterval(function(){ participateContest(lang.fr);participateContest(lang.en)}, 2*60*60*1000);
+setInterval(function(){ participateContest(lang.fr) }, 3*60*60*1000);
+setInterval(function(){ participateContest(lang.en) }, 6*60*60*1000);
 setInterval(function(){ unfollowAll()}, dayBeforeUnfollow*24*60*60*1000);
