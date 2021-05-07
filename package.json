@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bunyan": "^1.8.12",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.21",
     "twit": "^2.2.9"
   }
 }
